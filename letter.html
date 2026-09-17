@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A letter for you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,500&family=Manrope:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="letter-page">
+
+  <main class="letter-wrap">
+    <a href="index.html" class="letter-back" aria-label="Back to the site">←</a>
+    <article class="letter-card" id="letter-card">
+      <!-- filled in by script.js from letter.js -->
+    </article>
+  </main>
+
+  <script src="letter.js"></script>
+  <script src="music.js"></script>
+  <script>
+    // Simple play/pause music button, same as the main page
+    const audioEl = document.createElement("audio");
+    audioEl.loop = true;
+    audioEl.preload = "none";
+    audioEl.src = MUSIC_FILE;
+    document.body.appendChild(audioEl);
+
+    const musicBtn = document.createElement("button");
+    musicBtn.id = "music-toggle";
+    musicBtn.setAttribute("aria-label", "Play music");
+    musicBtn.innerHTML = `
+      <svg id="music-icon-note" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M9 18V5l12-2v13M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3zm12-2a3 3 0 1 1-3-3 3 3 0 0 1 3 3z"/></svg>
+      <svg id="music-icon-pause" viewBox="0 0 24 24" width="18" height="18" hidden><path fill="currentColor" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+    `;
+    document.body.appendChild(musicBtn);
+    const noteIcon = musicBtn.querySelector("#music-icon-note");
+    const pauseIcon = musicBtn.querySelector("#music-icon-pause");
+
+    musicBtn.addEventListener("click", () => {
+      if (audioEl.paused) { audioEl.play().catch(() => {}); }
+      else { audioEl.pause(); }
+    });
+    audioEl.addEventListener("play", () => {
+      musicBtn.classList.add("playing");
+      noteIcon.hidden = true; pauseIcon.hidden = false;
+    });
+    audioEl.addEventListener("pause", () => {
+      musicBtn.classList.remove("playing");
+      noteIcon.hidden = false; pauseIcon.hidden = true;
+    });
+  </script>
+  <script>
+    const titleEl = document.createElement("p");
+    titleEl.className = "letter-title";
+    titleEl.textContent = LETTER_TITLE;
+
+    const bodyEl = document.createElement("div");
+    bodyEl.className = "letter-body";
+    LETTER_TEXT.split("\n").forEach(line => {
+      const p = document.createElement("p");
+      p.textContent = line.trim() === "" ? "\u00A0" : line;
+      bodyEl.appendChild(p);
+    });
+
+    const signEl = document.createElement("p");
+    signEl.className = "letter-sign";
+    signEl.textContent = LETTER_SIGNATURE;
+
+    const card = document.getElementById("letter-card");
+    card.appendChild(titleEl);
+    card.appendChild(bodyEl);
+    card.appendChild(signEl);
+  </script>
+</body>
+</html>
